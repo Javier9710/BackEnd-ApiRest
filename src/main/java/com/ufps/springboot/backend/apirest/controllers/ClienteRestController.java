@@ -1,5 +1,6 @@
 package com.ufps.springboot.backend.apirest.controllers;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,20 +80,52 @@ public class ClienteRestController {
 	}
 	
 	@PutMapping("clientes/{id}")
-	@ResponseStatus(code = HttpStatus.CREATED)
-	public Cliente update(@RequestBody Cliente cliente, @PathVariable Long id) {
+	//@ResponseStatus(code = HttpStatus.CREATED)
+	public ResponseEntity<?> update(@RequestBody Cliente cliente, @PathVariable Long id) {
 		Cliente clienteActual = clienteService.findById(id);
-		clienteActual.setNombre(cliente.getNombre());
-		clienteActual.setApellido(cliente.getApellido());
-		clienteActual.setEmail(cliente.getEmail());
+		Cliente clienteUpdate = null;
+		Map<String, Object> response = new HashMap<>();
 		
-		return clienteService.save(clienteActual);
+		if (clienteActual==null) {
+			response.put("mensaje", "Error: no se pudo editar, El cliente ID: ".concat(id.toString().concat(" No existe en la db")));
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+			
+		}
+		
+		try {
+			clienteActual.setNombre(cliente.getNombre());
+			clienteActual.setApellido(cliente.getApellido());
+			clienteActual.setEmail(cliente.getEmail());
+			clienteActual.setCreateAt(cliente.getCreateAt());
+			clienteUpdate = clienteService.save(clienteActual);
+			
+		} catch (DataAccessException e) {
+			response.put("mensaje", "Error: no se pudo actualizar en la bd");
+			response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		response.put("mensaje", "El Cliente ha sido actualizado con exito");
+		response.put("cliente", clienteUpdate);
+		
+		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 		
 	}
 	
 	@DeleteMapping("clientes/{id}")
-	@ResponseStatus(code = HttpStatus.NO_CONTENT)
-	public void delete(@PathVariable Long id) {
-		clienteService.delete(id); 
+	//@ResponseStatus(code = HttpStatus.NO_CONTENT)
+	public ResponseEntity<?> delete(@PathVariable Long id) {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			clienteService.delete(id); 
+		} catch (DataAccessException e) {
+			response.put("mensaje", "Error: no se pudo eliminar en la bd");
+			response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		response.put("mensaje", "El cliente ha sido eliminado con exito");
+		
+		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+		
 	}
 }
