@@ -73,17 +73,17 @@ public class ClienteRestController {
 		
 		if (result.hasErrors()) {
 			
-			/*List<String> errors = new ArrayList<>();
+			List<String> errors = new ArrayList<>();
 			for (FieldError err : result.getFieldErrors()) {
-				errors.add("El campo "+ err.getField() +err.getDefaultMessage());
+				errors.add("El campo '"+ err.getField() + "' " + err.getDefaultMessage());
 				
-			}*/
+			}
 			
-			List<String> errors = result.getFieldErrors()
+			/*List<String> errors = result.getFieldErrors()
 					.stream()
 					.map(err -> 
-						 "El campo "+ err.getField() +err.getDefaultMessage())
-					.collect(Collectors.toList());
+						 "El campo "+ err.getField() + err.getDefaultMessage())
+					.collect(Collectors.toList());*/
 					
 			
 			response.put("errors", errors);
@@ -121,7 +121,7 @@ if (result.hasErrors()) {
 			List<String> errors = result.getFieldErrors()
 					.stream()
 					.map(err -> 
-						 "El campo "+ err.getField() +err.getDefaultMessage())
+						 "El campo '"+ err.getField() +"' " + err.getDefaultMessage())
 					.collect(Collectors.toList());
 					
 			

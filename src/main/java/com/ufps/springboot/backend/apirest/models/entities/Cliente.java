@@ -3,7 +3,6 @@ package com.ufps.springboot.backend.apirest.models.entities;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.annotation.Generated;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -28,16 +27,16 @@ public class Cliente implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	@NotEmpty(message = "No puede ser vacio")
+	@Size(min = 4, max = 12, message = "El tamaño tiene que estar entre 4 y 12 C")
 	@Column(nullable = false)
-	@NotEmpty
-	@Size(min = 4, max = 12)
 	private String nombre;
 	
-	@NotEmpty
+	@NotEmpty(message = "No puede ser vacio")
 	private String apellido;
 	
-	@NotEmpty
-	@Email
+	@NotEmpty(message = "No puede ser vacio")
+	@Email(message = "No es un formato correcto de correo")
 	@Column(nullable = false, unique = true)
 	private String email;
 	
